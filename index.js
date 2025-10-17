@@ -25,9 +25,10 @@
       let extensionId, browserType;
       if (state) {
         try {
-          const stateData = JSON.parse(decodeURIComponent(state));
+          const stateData = JSON.parse(Buffer.from(state, 'base64').toString('utf-8'));
           extensionId = stateData.extensionId;
           browserType = stateData.browser;
+          console.log('State decoded:', { extensionId, browserType });
         } catch (e) {
           console.error("Erreur lors du décodage du state:", e);
         }
@@ -36,8 +37,9 @@
       let redirectUrl;
       if (browserType === 'firefox' && extensionId) {
         redirectUrl = `moz-extension://${extensionId}/ui/auth-success.html#token=${tokens.access_token}`;
+      } else if (extensionId) {
+        redirectUrl = `chrome-extension://${extensionId}/ui/auth-success.html#token=${tokens.access_token}`;
       } else {
-        // Fallback sur Chrome
         const CHROME_EXTENSION_ID = "lfenfhdfohiphnoookkcidjneojppldh";
         redirectUrl = `chrome-extension://${CHROME_EXTENSION_ID}/ui/auth-success.html#token=${tokens.access_token}`;
       }
