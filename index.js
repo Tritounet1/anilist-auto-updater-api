@@ -7,8 +7,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.static("public"));
-
 app.get("/callback", async (req, res) => {
   const { code, state } = req.query;
   if (!code) return res.status(400).send("Missing code parameter");
@@ -40,8 +38,7 @@ app.get("/callback", async (req, res) => {
 
     let redirectUrl;
     if (browserType === "firefox" && extensionId) {
-      redirectUrl = `https://anilist-api.tritounet.fr/firefox-redirect.html?token=${encodeURIComponent(tokens.access_token)}&ext=${encodeURIComponent(extensionId)}`;
-      // redirectUrl = `moz-extension://${extensionId}/ui/auth-success.html#token=${tokens.access_token}`;
+      redirectUrl = `moz-extension://${extensionId}/ui/auth-success.html#token=${tokens.access_token}`;
     } else if (extensionId) {
       redirectUrl = `chrome-extension://${extensionId}/ui/auth-success.html#token=${tokens.access_token}`;
     } else {
